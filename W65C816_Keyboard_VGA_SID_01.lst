@@ -1,4 +1,4 @@
-  Sun Jan 24 2016 20:17                                                Page 1
+  Mon Jan 25 2016 12:10                                                Page 1
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     
@@ -58,7 +58,7 @@
     38             00007F04   VIA_KEY_T1CLO	EQU VIA_KEY_BASE+4
     39             00007F05   VIA_KEY_T1CHI	EQU VIA_KEY_BASE+5
     40             00007F06   VIA_KEY_T1LLO	EQU VIA_KEY_BASE+6
-  Sun Jan 24 2016 20:17                                                Page 2
+  Mon Jan 25 2016 12:10                                                Page 2
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     
@@ -118,7 +118,7 @@
     90                        ;########################### Propeller addreses ##
                     ###################
     91                        
-  Sun Jan 24 2016 20:17                                                Page 3
+  Mon Jan 25 2016 12:10                                                Page 3
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     
@@ -178,7 +178,7 @@
    142                        ;########################### Zero Page ###########
                     ##########
    143                        
-  Sun Jan 24 2016 20:17                                                Page 4
+  Mon Jan 25 2016 12:10                                                Page 4
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     
@@ -219,7 +219,7 @@
    171                        	.STTL "W65C816_Keyboard_VGA_SID"
    172                        	.PAGE
    173                        				ORG $0200
-  Sun Jan 24 2016 20:17                                                Page 5
+  Mon Jan 25 2016 12:10                                                Page 5
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -279,7 +279,7 @@
    214 00:0235: A9 FF        				LDA #$FF
    215 00:0237: 8D 03 7F     				STA VIA_KEY_DDRA	
                     ; Make Port A output.
-  Sun Jan 24 2016 20:17                                                Page 6
+  Mon Jan 25 2016 12:10                                                Page 6
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -339,7 +339,7 @@
    253                        ; read_Keyboard: Read the C64 Keyboard
    254                        ;-------------------------------------------------
                     ------------------------				
-  Sun Jan 24 2016 20:17                                                Page 7
+  Mon Jan 25 2016 12:10                                                Page 7
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -399,7 +399,7 @@
    287                        encode_Keyboard	
    288                        
    289 00:028D: A5 2D        				LDA KeyRaw		
-  Sun Jan 24 2016 20:17                                                Page 8
+  Mon Jan 25 2016 12:10                                                Page 8
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -459,7 +459,7 @@
    317 00:02B9: A5 28        				LDA KeyRow06		
                     ; Sixth Matrix row.
    318 00:02BB: 29 EF        				AND #%11101111		
-  Sun Jan 24 2016 20:17                                                Page 9
+  Mon Jan 25 2016 12:10                                                Page 9
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -519,7 +519,7 @@
    349 00:02E5: E8           				INX			
                     		; Next Matrix  position
    350 00:02E6: E0 08        				CPX #8			
-  Sun Jan 24 2016 20:17                                                Page 10
+  Mon Jan 25 2016 12:10                                                Page 10
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -579,7 +579,7 @@
    392 00:030C: 3A           				DEC
    393 00:030D: D0 F7        				BNE dloop1
    394 00:030F: 60           				RTS
-  Sun Jan 24 2016 20:17                                                Page 11
+  Mon Jan 25 2016 12:10                                                Page 11
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -639,7 +639,7 @@
    428                        				
    429                        ;-------------------------------------------------
                     ------------------------
-  Sun Jan 24 2016 20:17                                                Page 12
+  Mon Jan 25 2016 12:10                                                Page 12
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -699,7 +699,7 @@
    476 00:0014: 43           				BYTE "C" ; 14
    477 00:0015: 46           				BYTE "F" ; 15
    478 00:0016: 54           				BYTE "T" ; 16
-  Sun Jan 24 2016 20:17                                                Page 13
+  Mon Jan 25 2016 12:10                                                Page 13
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -759,7 +759,7 @@
        00:0044: 53 58 42 20 
        00:0048: 4B 65 79 62 
        00:004C: 6F 61 72 64 
-  Sun Jan 24 2016 20:17                                                Page 14
+  Mon Jan 25 2016 12:10                                                Page 14
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
@@ -819,7 +819,7 @@
    555 00:7EFA: 37 03        				DW badVec		
                     ; $FFFA -  NMIRQ (ALL)
    556 00:7EFC: 00 02        				DW START		
-  Sun Jan 24 2016 20:17                                                Page 15
+  Mon Jan 25 2016 12:10                                                Page 15
 
     "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
     "W65C816_Keyboard_VGA_SID"
