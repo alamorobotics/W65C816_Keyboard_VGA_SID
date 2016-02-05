@@ -49,6 +49,27 @@ VIA_KEY_IER		EQU VIA_KEY_BASE+14
 VIA_KEY_ORANH	EQU VIA_KEY_BASE+15
 VIA_KEY_IRANH	EQU VIA_KEY_BASE+15
 
+VIA_PROP_BASE	EQU $7F20		; base address of extra VIA on SXB used for the Propeller
+VIA_PROP_ORB	EQU VIA_PROP_BASE
+VIA_PROP_IRB	EQU VIA_PROP_BASE
+VIA_PROP_ORA	EQU VIA_PROP_BASE+1
+VIA_PROP_IRA	EQU VIA_PROP_BASE+1
+VIA_PROP_DDRB	EQU VIA_PROP_BASE+2
+VIA_PROP_DDRA	EQU VIA_PROP_BASE+3
+VIA_PROP_T1CLO	EQU VIA_PROP_BASE+4
+VIA_PROP_T1CHI	EQU VIA_PROP_BASE+5
+VIA_PROP_T1LLO	EQU VIA_PROP_BASE+6
+VIA_PROP_T1LHI	EQU VIA_PROP_BASE+7
+VIA_PROP_T2CLO	EQU VIA_PROP_BASE+8
+VIA_PROP_T2CHI	EQU VIA_PROP_BASE+9
+VIA_PROP_SR		EQU VIA_PROP_BASE+10
+VIA_PROP_ACR	EQU VIA_PROP_BASE+11
+VIA_PROP_PCR	EQU VIA_PROP_BASE+12
+VIA_PROP_IFR	EQU VIA_PROP_BASE+13
+VIA_PROP_IER	EQU VIA_PROP_BASE+14
+VIA_PROP_ORANH	EQU VIA_PROP_BASE+15
+VIA_PROP_IRANH	EQU VIA_PROP_BASE+15
+
 VIA_BASE		EQU $7FC0		; base address of VIA port on SXB
 VIA_ORB			EQU VIA_BASE
 VIA_IRB			EQU VIA_BASE
@@ -145,6 +166,12 @@ SID_MODVOL		EQU SID_BASE+$18
 StringLo		EQU $10 ; Low pointer
 StringHi		EQU $11 ; High pointer
 
+; Temp Storage
+Temp			EQU $12 ; Temp storage
+Temp1			EQU $13 ; Temp storage
+Temp2			EQU $14 ; Temp storage
+Temp3			EQU $15 ; Temp storage
+
 KeyMapLo		EQU $20 ; Low pointer
 KeyMapHi		EQU $21 ; High pointer
 KeyRow00		EQU $22 ; Keyboard Matrix row 0
@@ -162,6 +189,10 @@ KeyRaw			EQU $2D ; Raw value 0-63, , if no key pressed, 128...
 KeyCoded		EQU $2E ; ASCII encoded Value
 KeyPrevious		EQU $2F ; Raw previous value, if no key pressed, 128...
 
+KeyX 			EQU $30 ; Cursor X
+KeyY 			EQU $31 ; Cursor Y
+
+
 ;########################### Main Program #####################
 
 	CHIP 65C02
@@ -175,24 +206,371 @@ START
 
 				JSR init_ACIA			; Init ACIA
 				JSR	init_Keyboard		; Setup Keyboard and VIA_KEY
+				JSR init_Propeller		; Setup Propeller communication
 				
+				LDA #$20				; Blank Screen
+				LDX #VGA_FILL_CHAR
+				JSR writeToPropeller
+				
+				LDA #02					; Red
+				LDX #03					; Green
+				LDY #00					; Blue
+				JSR calc_rgb
+				LDX #VGA_FILL_COL		; Yello Text
+				JSR writeToPropeller	
+
+				LDA #00					; Red
+				LDX #00					; Green
+				LDY #00					; Blue
+				JSR calc_rgb
+				LDX #VGA_FILL_BACK		; Blue background
+				JSR writeToPropeller					
+				
+				LDA #$1					; Print with one char at the time
+				LDX #VGA_AUTO_INC
+				JSR writeToPropeller
+
+				LDX	#30					; Print String
+				LDY #1
 				LDA #<String1     		; Load String Pointers.
 				STA StringLo
 				LDA #>String1
-				STA StringHi				
-				JSR printString
-				JSR print_NewLine
+				STA StringHi
+				JSR printStringXY
 
+				LDX	#30					; Print String
+				LDY #0
+				JSR setXY
+				
+				LDA #10
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				LDA #14
+				LDY #39
+d1				JSR writeToPropeller			
+				DEY
+				BNE d1
+				LDA #11
+				JSR writeToPropeller			
+				
+				LDX	#30					; Print String
+				LDY #2
+				JSR setXY
+				
+				LDA #12
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				LDA #14
+				LDY #39
+d2				JSR writeToPropeller			
+				DEY
+				BNE d2
+				LDA #13
+				JSR writeToPropeller			
+
+; Green area
+
+				LDY #4
+				STY Temp3
+				
+				LDA #00					; Red
+				LDX #03					; Green
+				LDY #00					; Blue
+				JSR calc_rgb
+				STA Temp1
+
+				LDA #00					; Red
+				LDX #01 				; Green
+				LDY #00					; Blue
+				JSR calc_rgb
+				STA Temp2
+
+g1				LDX	#0
+				LDY Temp3
+				JSR setXY
+
+				LDA Temp1
+				LDX #VGA_ROW_BACK		; Blue background
+				JSR writeToPropeller				
+
+				LDA Temp2
+				LDX #VGA_ROW_COLOR		; Blue background
+				JSR writeToPropeller							
+
+				INC Temp3
+				LDY Temp3
+				CPY #47
+				BNE g1
+
+				LDX	#0					; Print String
+				LDY #4
+				JSR setXY
+				
+				LDA #10
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				LDA #14
+				LDY #60
+g2				JSR writeToPropeller			
+				DEY
+				BNE g2
+				LDA #11
+				JSR writeToPropeller			
+				
+				LDX	#0					; Print String
+				LDY #46
+				JSR setXY
+				
+				LDA #12
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				LDA #14
+				LDY #60
+g3				JSR writeToPropeller			
+				DEY
+				BNE g3
+				LDA #13
+				JSR writeToPropeller			
+
+				
+				LDY #5
+				STY Temp3
+g4				LDX	#0					; Print String
+				JSR setXY
+				
+				LDA #15
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller
+				INC Temp3
+				LDY Temp3
+				CPY #46
+				BNE g4				
+				
+				LDY #5
+				STY Temp3
+g5				LDX	#61					; Print String
+				JSR setXY
+				
+				LDA #15
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller
+				INC Temp3
+				LDY Temp3
+				CPY #46
+				BNE g5
+				
+
+				LDX	#62					; Print String
+				LDY #4
+				JSR setXY
+				
+				LDA #10
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				LDA #14
+				LDY #36
+g6				JSR writeToPropeller			
+				DEY
+				BNE g6
+				LDA #11
+				JSR writeToPropeller			
+				
+				LDX	#62					; Print String
+				LDY #46
+				JSR setXY
+				
+				LDA #12
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				LDA #14
+				LDY #36
+g7				JSR writeToPropeller			
+				DEY
+				BNE g7
+				LDA #13
+				JSR writeToPropeller			
+
+
+				LDY #5
+				STY Temp3
+g8				LDX	#62					; Print String
+				JSR setXY
+				
+				LDA #15
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller
+				INC Temp3
+				LDY Temp3
+				CPY #46
+				BNE g8
+				
+				LDY #5
+				STY Temp3
+g9				LDX	#99					; Print String
+				JSR setXY
+				
+				LDA #15
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller
+				INC Temp3
+				LDY Temp3
+				CPY #46
+				BNE g9
+				
+
+				LDX	#63					; Print String
+				LDY #5
+				LDA #<String3     		; Load String Pointers.
+				STA StringLo
+				LDA #>String3
+				STA StringHi
+				JSR printStringXY
+
+				LDX	#63					; Print String
+				LDY #6
+				LDA #<String4     		; Load String Pointers.
+				STA StringLo
+				LDA #>String4
+				STA StringHi
+				JSR printStringXY				
+				
+; Blue area				
+				LDX	#0
+				LDY #47
+				JSR setXY
+				
+				LDA #00					; Red
+				LDX #00					; Green
+				LDY #03					; Blue
+				JSR calc_rgb
+				STA Temp1
+				LDX #VGA_ROW_BACK		; Blue background
+				JSR writeToPropeller				
+
+				LDA #02					; Red
+				LDX #02					; Green
+				LDY #02					; Blue
+				JSR calc_rgb
+				STA Temp2
+				LDX #VGA_ROW_COLOR		; Blue background
+				JSR writeToPropeller							
+
+				LDA #10
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				LDA #14
+				LDY #98
+d3				JSR writeToPropeller			
+				DEY
+				BNE d3
+				LDA #11
+				JSR writeToPropeller				
+				
+				LDX	#0
+				LDY #48
+				JSR setXY
+
+				LDA Temp1
+				LDX #VGA_ROW_BACK		; Blue background
+				JSR writeToPropeller				
+
+				LDA Temp2
+				LDX #VGA_ROW_COLOR		; Blue background
+				JSR writeToPropeller							
+
+				LDA #15
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+
+				LDX	#99
+				LDY #48
+				JSR setXY
+
+				LDA #15
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				
+				LDX	#0
+				LDY #49
+				JSR setXY
+
+				LDA Temp1
+				LDX #VGA_ROW_BACK		; Blue background
+				JSR writeToPropeller				
+
+				LDA Temp2
+				LDX #VGA_ROW_COLOR		; Blue background
+				JSR writeToPropeller							
+
+				LDA #12
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller			
+				LDA #14
+				LDY #98
+d4				JSR writeToPropeller			
+				DEY
+				BNE d4
+				LDA #13
+				JSR writeToPropeller				
+
+				LDX	#1					; Print String
+				LDY #48
+				LDA #<String2     		; Load String Pointers.
+				STA StringLo
+				LDA #>String2
+				STA StringHi
+				JSR printStringXY
+				
+				LDX	#1
+				STX KeyX
+				LDY #5
+				STY KeyY
+				JSR setXY				
+				
+				
 MAINLOOP
 				
-				JSR read_Keyboard
+				JSR read_KeyMatrix
+
+				LDX	#40
+				LDY #48
+				JSR setXY
+				LDX #0
+				STX Temp3
+				
+q1				LDA KeyRow00, X
+				JSR printHex
+				LDA #$20
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller
+				INC Temp3
+				LDX Temp3
+				CPX #8
+				BNE q1
+
+				
+				JSR encode_Keyboard
+
+				LDX	#14
+				LDY #48
+				JSR setXY
+				LDA KeyCTRLKeys
+				JSR printHex
 				
 				LDA KeyRaw				; Load raw char
 				BMI no_key_pressed		; Pressed ?
 				CMP KeyPrevious			; Same as previous ?
 				BEQ no_key_pressed		; Then don't print
+				
+				LDX KeyX
+				LDY KeyY
+				JSR setXY				
+				
 				LDA KeyCoded			; Get mapped key
-				JSR sendChar			; Send it
+				LDX #VGA_PRINT			; Print
+				JSR writeToPropeller				
+				
+				INC KeyX
 				
 no_key_pressed				
 				JSR delay
@@ -238,6 +616,118 @@ init_ACIA
 				RTS
 
 ;-------------------------------------------------------------------------
+; writeToPropeller, A is data, X is Address
+;-------------------------------------------------------------------------
+
+writeToPropeller
+				PHA					; Save A
+				PHA					; Save A Again
+tstBusy			LDA	VIA_PROP_IRB	; Read Output.
+				BMI	tstBusy			; Wait for Propeller to finish, high bit will be low when done.
+				PLA					; Restore A
+				STA	VIA_PROP_ORA
+				TXA
+				ORA #$40			; Set Write Flag.
+				STA VIA_PROP_ORB	; Send data.
+tstBusy2		LDA	VIA_PROP_ORB	; Read Output.
+				BPL	tstBusy2		; Wait for Propeller to be busy, high bit will be high when busy
+				TXA
+				AND #$3F			; Clear Write Flag.
+				STA VIA_PROP_ORB	; Flag it.
+				
+				PLA					; Restore A
+				RTS				
+				
+;-------------------------------------------------------------------------
+; calc_rgb: A = R, X = G, Y = B values between 0 and 3
+; Resulting byte is RRGGBB00 each two bit values.
+;-------------------------------------------------------------------------
+
+calc_rgb		CLC
+				ROL				; Shift Red 6 bits
+				ROL
+				ROL
+				ROL
+				ROL
+				ROL
+				STA Temp		; Store in Temp
+				TXA				; X to A and shift Green 4 bits
+				CLC
+				ROL
+				ROL
+				ROL
+				ROL
+				CLC
+				ADC Temp		; Add with Temp
+				STA Temp		; Store in Temp
+				TYA				; Y to A and shift Blue 2 bits
+				CLC
+				ROL
+				ROL
+				CLC
+				ADC Temp		; Add with Temp
+				RTS
+
+;-------------------------------------------------------------------------
+; printHex: Print a HEX value, the Woz way...
+;-------------------------------------------------------------------------
+
+printHex
+				PHA				; Save A for LSD
+				LSR
+				LSR
+				LSR				; MSD to LSD position
+				LSR
+				JSR PRHEX		; Output hex digit 
+				PLA				; Restore A
+PRHEX			AND #%00001111	; Mask LSD for hex print			  
+				ORA #"0"		; Add "0"
+				CMP #"9"+1		; Is it a decimal digit ?
+				BCC ECHO		; Yes Output it
+				ADC #6			; Add offset for letter A-F
+ECHO			LDX #VGA_PRINT	; Print
+				JSR writeToPropeller	; Print it...
+				RTS
+
+;-------------------------------------------------------------------------
+; setXY: Set XY from X and Y register.
+;-------------------------------------------------------------------------
+
+setXY
+				TXA
+				LDX #VGA_COL
+				JSR writeToPropeller
+				TYA
+				LDX #VGA_ROW
+				JMP writeToPropeller
+			  
+;-------------------------------------------------------------------------
+; printStringXY: Print a string preloaded in StringLo at XY from X and Y register.
+;-------------------------------------------------------------------------
+
+printStringXY
+				TXA
+				LDX #VGA_COL
+				JSR writeToPropeller
+				TYA
+				LDX #VGA_ROW
+				JSR writeToPropeller
+
+;-------------------------------------------------------------------------
+; printString: Print a string preloaded in StringLo
+;-------------------------------------------------------------------------
+
+printString
+				LDY #0
+nextChar		LDA (StringLo),Y	; Get character
+				BEQ done_Printing	; Zero, we done...
+				LDX #VGA_PRINT		; Print
+				JSR writeToPropeller
+				INY					; Next, cannot print more than 254 bytes or we wrap around in an infinite loop.
+				BRA nextChar		; Continue
+done_Printing	RTS				
+				
+;-------------------------------------------------------------------------
 ; init_Keyboard: Setup Keyboard to be read.
 ;-------------------------------------------------------------------------				
 
@@ -247,6 +737,17 @@ init_Keyboard
 				LDA #>keyMatrixMap
 				STA KeyMapHi
 				JSR init_Key_VIA			; Init VIA
+				RTS
+				
+;-------------------------------------------------------------------------
+; init_Propeller: Setup Propeller communication
+;-------------------------------------------------------------------------				
+
+init_Propeller
+				LDA #$FF				; Make all output
+				STA VIA_PROP_DDRA
+				LDA #$7F
+				STA VIA_PROP_DDRB		; Bit 0-7 output, bit 8 input
 				RTS
 				
 ;-------------------------------------------------------------------------
@@ -382,7 +883,7 @@ TxDelay
 ; delay: Just a Delay
 ;-------------------------------------------------------------------------				
 
-delay			LDA #$08
+delay			LDA #$02
 				LDY #$00            ; Loop 8*256*256 times...
 				LDX #$00
 dloop1			DEX
@@ -397,34 +898,34 @@ dloop1			DEX
 ; printHex: Print a HEX value, the Woz way...
 ;-------------------------------------------------------------------------
 
-printHex
+sendHex
 				PHA				; Save A for LSD
 				LSR
 				LSR
 				LSR				; MSD to LSD position
 				LSR
-				JSR PRHEX		; Output hex digit 
+				JSR PRHEX2		; Output hex digit 
 				PLA				; Restore A
-PRHEX			AND #%00001111	; Mask LSD for hex print			  
+PRHEX2			AND #%00001111	; Mask LSD for hex print			  
 				ORA #"0"		; Add "0"
 				CMP #"9"+1		; Is it a decimal digit ?
-				BCC ECHO		; Yes Output it
+				BCC ECHO2		; Yes Output it
 				ADC #6			; Add offset for letter A-F
-ECHO			JSR sendChar	; Print it...
+ECHO2			JSR sendChar	; Print it...
 				RTS
 
 ;-------------------------------------------------------------------------
 ; printString: Print a String 
 ;-------------------------------------------------------------------------				
 				
-printString
+sendString
 				LDY #0
-nextChar		LDA (StringLo),Y	; Get character
-				BEQ done_Printing	; Zero, we done...
+nextChar2		LDA (StringLo),Y	; Get character
+				BEQ done_Printing2	; Zero, we done...
 				JSR sendChar
 				INY					; Next, cannot print more than 254 bytes or we wrap around in an infinite loop.
-				BRA nextChar		; Continue
-done_Printing	RTS			
+				BRA nextChar2		; Continue
+done_Printing2	RTS			
 				
 ;-------------------------------------------------------------------------
 ; FUNCTION NAME	: Event Hander re-vectors
@@ -522,9 +1023,17 @@ keyMatrixMap
 				BYTE "3" ; 3D F3 
 				BYTE "5" ; 3E F5
 				BYTE "7" ; 3F F7
-	
+				
 String1
-				BYTE	"W65CSXB Keyboard, VGA and SID system...", $0C, $0D, $00 ; 1
+				BYTE	15, "         ZEBERPUPIN W65C816SXB         ", 15, $00
+				BYTE	15, "W65CSXB Keyboard, VGA and SID system...", 15, $00
+				
+String2
+				BYTE	"Status Keys:          Keyboard Matrix:  ", $00
+String3
+				BYTE	4, " Testing selection 1", $00
+String4
+				BYTE	5, " Testing selection 2", $00
 			
 	ENDS
 
