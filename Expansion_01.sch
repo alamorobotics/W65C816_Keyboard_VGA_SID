@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
@@ -13122,6 +13122,9 @@ Source: http://www.lumberg.com/Produkte/PDFs/1503_04.pdf</description>
 <part name="R37" library="resistor" deviceset="R-US_" device="0207/10" value="470"/>
 <part name="LINE" library="con-lumberg" deviceset="1503_04" device="" value="Line Out"/>
 <part name="VSS11" library="supply1" deviceset="VSS" device=""/>
+<part name="R38" library="resistor" deviceset="R-US_" device="0207/10" value="10K"/>
+<part name="+3V6" library="supply1" deviceset="+3V3" device=""/>
+<part name="R39" library="resistor" deviceset="R-US_" device="0207/10" value="10K"/>
 </parts>
 <sheets>
 <sheet>
@@ -13304,7 +13307,7 @@ Source: http://www.lumberg.com/Produkte/PDFs/1503_04.pdf</description>
 <instance part="+3V3" gate="G$1" x="12.7" y="157.48"/>
 <instance part="IC3" gate="G$1" x="-17.78" y="194.31" rot="R270"/>
 <instance part="XTAL1" gate="G$1" x="16.51" y="147.32" rot="R90"/>
-<instance part="+3V5" gate="G$1" x="25.4" y="205.74"/>
+<instance part="+3V5" gate="G$1" x="25.4" y="215.9"/>
 <instance part="VSS7" gate="G$1" x="-33.02" y="185.42" smashed="yes">
 <attribute name="VALUE" x="-30.48" y="182.88" size="1.778" layer="96" rot="R180"/>
 </instance>
@@ -13435,6 +13438,9 @@ Source: http://www.lumberg.com/Produkte/PDFs/1503_04.pdf</description>
 <instance part="VSS11" gate="G$1" x="69.85" y="53.34" smashed="yes">
 <attribute name="VALUE" x="72.39" y="50.8" size="1.778" layer="96" rot="R180"/>
 </instance>
+<instance part="R38" gate="G$1" x="-43.18" y="218.44" rot="R90"/>
+<instance part="+3V6" gate="G$1" x="-43.18" y="231.14"/>
+<instance part="R39" gate="G$1" x="17.78" y="205.74"/>
 </instances>
 <busses>
 <bus name="DATA_BUS_[0..7]">
@@ -14279,18 +14285,27 @@ Source: http://www.lumberg.com/Produkte/PDFs/1503_04.pdf</description>
 <wire x1="25.4" y1="185.42" x2="25.4" y2="193.04" width="0.1524" layer="91"/>
 <pinref part="R12" gate="G$1" pin="2"/>
 <wire x1="25.4" y1="193.04" x2="25.4" y2="198.12" width="0.1524" layer="91"/>
-<wire x1="25.4" y1="198.12" x2="25.4" y2="203.2" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="198.12" x2="25.4" y2="205.74" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="205.74" x2="25.4" y2="213.36" width="0.1524" layer="91"/>
 <wire x1="22.86" y1="193.04" x2="25.4" y2="193.04" width="0.1524" layer="91"/>
 <junction x="25.4" y="193.04"/>
 <pinref part="IC3" gate="G$1" pin="+3V3"/>
 <wire x1="-7.62" y1="198.12" x2="25.4" y2="198.12" width="0.1524" layer="91"/>
 <junction x="25.4" y="198.12"/>
+<pinref part="R39" gate="G$1" pin="2"/>
+<wire x1="22.86" y1="205.74" x2="25.4" y2="205.74" width="0.1524" layer="91"/>
+<junction x="25.4" y="205.74"/>
 </segment>
 <segment>
 <pinref part="+3V3" gate="G$1" pin="+3V3"/>
 <pinref part="IC2" gate="G$1" pin="+3V3@2"/>
 <wire x1="12.7" y1="154.94" x2="12.7" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="12.7" y1="152.4" x2="-5.08" y2="152.4" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="+3V6" gate="G$1" pin="+3V3"/>
+<pinref part="R38" gate="G$1" pin="2"/>
+<wire x1="-43.18" y1="228.6" x2="-43.18" y2="223.52" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$25" class="0">
@@ -14322,8 +14337,12 @@ Source: http://www.lumberg.com/Produkte/PDFs/1503_04.pdf</description>
 <wire x1="-30.48" y1="147.32" x2="-50.8" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="-50.8" y1="147.32" x2="-50.8" y2="210.82" width="0.1524" layer="91"/>
 <pinref part="JP1" gate="A" pin="2"/>
-<wire x1="-50.8" y1="210.82" x2="-15.24" y2="210.82" width="0.1524" layer="91"/>
+<wire x1="-50.8" y1="210.82" x2="-43.18" y2="210.82" width="0.1524" layer="91"/>
+<wire x1="-43.18" y1="210.82" x2="-15.24" y2="210.82" width="0.1524" layer="91"/>
 <wire x1="-15.24" y1="210.82" x2="-15.24" y2="223.52" width="0.1524" layer="91"/>
+<pinref part="R38" gate="G$1" pin="1"/>
+<wire x1="-43.18" y1="213.36" x2="-43.18" y2="210.82" width="0.1524" layer="91"/>
+<junction x="-43.18" y="210.82"/>
 </segment>
 </net>
 <net name="N$31" class="0">
@@ -14355,10 +14374,14 @@ Source: http://www.lumberg.com/Produkte/PDFs/1503_04.pdf</description>
 <segment>
 <pinref part="IC2" gate="G$1" pin="P31"/>
 <wire x1="-5.08" y1="172.72" x2="2.54" y2="172.72" width="0.1524" layer="91"/>
-<wire x1="2.54" y1="172.72" x2="2.54" y2="210.82" width="0.1524" layer="91"/>
+<wire x1="2.54" y1="172.72" x2="2.54" y2="205.74" width="0.1524" layer="91"/>
 <pinref part="JP1" gate="A" pin="3"/>
+<wire x1="2.54" y1="205.74" x2="2.54" y2="210.82" width="0.1524" layer="91"/>
 <wire x1="2.54" y1="210.82" x2="-12.7" y2="210.82" width="0.1524" layer="91"/>
 <wire x1="-12.7" y1="210.82" x2="-12.7" y2="223.52" width="0.1524" layer="91"/>
+<pinref part="R39" gate="G$1" pin="1"/>
+<wire x1="12.7" y1="205.74" x2="2.54" y2="205.74" width="0.1524" layer="91"/>
+<junction x="2.54" y="205.74"/>
 </segment>
 </net>
 <net name="N$27" class="0">

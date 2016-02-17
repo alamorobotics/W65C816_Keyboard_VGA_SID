@@ -1,5 +1,5 @@
-; File: W65C816_Keyboard_VGA_SID_01.asm
-; 12/26/2015
+; File: W65C816_Zeberpupin_Monitor.asm
+; 2/14/2016
 
 ;############################# DESCIPTION ########################
 
@@ -23,7 +23,7 @@
 		EXIT  "Not Valid Processor: Use -DUSING_02, etc."
 	ENDIF
 
-	TITLE  "W65C816_Keyboard_VGA_SID W65C816_Keyboard_VGA_SID_01.asm"
+	TITLE  "W65C816_Zeberpupin_Monitor W65C816_Zeberpupin_Monitor.asm"
 	STTL
 
 ;########################### I/O addreses #####################
@@ -214,7 +214,7 @@ colorBack		EQU $37 ; Color of Background
 	LONGI OFF
 	LONGA OFF
 
-	.STTL "W65C816_Keyboard_VGA_SID"
+	.STTL "W65C816_Zeberpupin_Monitor"
 	.PAGE
 				ORG $0200
 START
@@ -245,11 +245,11 @@ START
 				LDX #VGA_AUTO_INC
 				JSR writeToPropeller
 
-				LDX	#30					; Print String
+				LDX	#33					; Print String
 				LDY #1
-				LDA #<String1     		; Load String Pointers.
+				LDA #<sTitle     		; Load String Pointers.
 				STA StringLo
-				LDA #>String1
+				LDA #>sTitle
 				STA StringHi
 				JSR printStringXY
 
@@ -257,7 +257,7 @@ START
 				LDY #0
 				STX corner1X
 				STY corner1Y
-				LDX #70
+				LDX #71
 				LDY #2
 				STX corner2X
 				STY corner2Y
@@ -267,13 +267,13 @@ START
 
 				
 				LDA #00					; Red
-				LDX #03					; Green
+				LDX #00					; Green
 				LDY #00					; Blue
 				JSR calc_rgb
 				STA colorBack
 
 				LDA #00					; Red
-				LDX #01 				; Green
+				LDX #03 				; Green
 				LDY #00					; Blue
 				JSR calc_rgb
 				STA colorChar
@@ -299,22 +299,6 @@ START
 				STY corner2Y
 				JSR drawBox
 
-				LDX	#63					; Print String
-				LDY #5
-				LDA #<String3     		; Load String Pointers.
-				STA StringLo
-				LDA #>String3
-				STA StringHi
-				JSR printStringXY
-
-				LDX	#63					; Print String
-				LDY #6
-				LDA #<String4     		; Load String Pointers.
-				STA StringLo
-				LDA #>String4
-				STA StringHi
-				JSR printStringXY				
-				
 ; Blue area				
 
 				LDA #00					; Red
@@ -344,11 +328,11 @@ START
 				LDY #47
 				JSR setXY
 
-				LDX	#1					; Print String
+				LDX	#7					; Print String
 				LDY #48
-				LDA #<String2     		; Load String Pointers.
+				LDA #<sStatus     		; Load String Pointers.
 				STA StringLo
-				LDA #>String2
+				LDA #>sStatus
 				STA StringHi
 				JSR printStringXY
 				
@@ -368,94 +352,6 @@ START
 				LDX #VGA_CUR1_MODE
 				JSR writeToPropeller
 				
-				
-				LDX	#1					; Print String
-				LDY #7
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#2					; Print String
-				LDY #8
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#3					; Print String
-				LDY #9
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#4					; Print String
-				LDY #10
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#5					; Print String
-				LDY #11
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#6					; Print String
-				LDY #12
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#7					; Print String
-				LDY #13
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#8					; Print String
-				LDY #14
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#9					; Print String
-				LDY #15
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#10					; Print String
-				LDY #16
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
-				
-				LDX	#11					; Print String
-				LDY #17
-				LDA #<String5     		; Load String Pointers.
-				STA StringLo
-				LDA #>String5
-				STA StringHi
-				JSR printStringXY
 				
 				; X values
 				LDA #63
@@ -480,7 +376,7 @@ MAINLOOP
 				
 				JSR read_KeyMatrix
 
-				LDX	#40
+				LDX	#64
 				LDY #48
 				JSR setXY
 				LDX #0
@@ -499,7 +395,7 @@ q1				LDA KeyRow00, X
 				
 				JSR encode_Keyboard
 
-				LDX	#14
+				LDX	#43
 				LDY #48
 				JSR setXY
 				LDA KeyCTRLKeys
@@ -1095,16 +991,10 @@ keyMatrixMap
 				BYTE "5" ; 3E F5
 				BYTE "7" ; 3F F7
 				
-String1
-				BYTE	15, "         ZEBERPUPIN W65C816SXB         ", 15, $00
-String2
-				BYTE	"Status Keys:          Keyboard Matrix:  ", $00
-String3
-				BYTE	4, " Testing selection 1", $00
-String4
-				BYTE	5, " Testing selection 2", $00
-String5			
-				BYTE	"12345678901234567890123456789012345678901234567890", $00
+sTitle
+				BYTE	"W65C816SXB ZEBERPUPIN Memory Monitor", $00
+sStatus
+				BYTE	"Memory start: $008000  Status Keys: 00  Keyboard Matrix:  ", $00
 			
 	ENDS
 

@@ -1,3 +1,14 @@
+# My stuff
+# =========================
+*.bin
+*.lst
+*.obj
+*.map
+*.sym
+*.s#*
+*.b#*
+
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
